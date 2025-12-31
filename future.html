@@ -98,6 +98,129 @@
                 padding-top: 1.5rem;
             }
         }
+
+        /* Music Player Styles */
+        .music-player {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 20px;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin: 2rem auto;
+            max-width: 450px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            position: relative;
+            z-index: 20;
+        }
+
+        .vinyl-container {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            flex-shrink: 0;
+        }
+
+        .vinyl-record {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle, #333 0%, #111 40%, #000 70%, #111 80%, #333 100%);
+            position: relative;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: spin-vinyl 6s linear infinite;
+            animation-play-state: paused;
+        }
+
+        .vinyl-record.playing {
+            animation-play-state: running;
+        }
+
+        .vinyl-record::after {
+            content: "";
+            position: absolute;
+            width: 30%;
+            height: 30%;
+            border-radius: 50%;
+            background: var(--color-gold);
+            border: 2px solid #000;
+        }
+
+        .player-info {
+            flex-grow: 1;
+        }
+
+        .player-title {
+            color: var(--color-gold);
+            font-family: var(--font-accent);
+            font-size: 1.1rem;
+            margin-bottom: 0.2rem;
+            font-weight: bold;
+        }
+
+        .player-artist {
+            opacity: 0.7;
+            font-size: 0.8rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .player-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .play-pause-btn {
+            background: var(--color-gold);
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+            color: #000;
+        }
+
+        .play-pause-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .progress-container {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            margin-top: 8px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            flex-grow: 1;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--color-gold);
+            width: 0%;
+            border-radius: 2px;
+            box-shadow: 0 0 10px var(--color-gold);
+        }
+
+        @keyframes spin-vinyl {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
     </style>
 </head>
 
