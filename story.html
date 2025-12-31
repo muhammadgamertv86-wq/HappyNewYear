@@ -9,6 +9,7 @@
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Playfair+Display:ital,wght@1,400;1,600&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
     <style>
         body {
             display: block !important;
@@ -321,36 +322,104 @@
 
         <audio id="secret-audio" src="voice-note.mp3"></audio>
 
-        <div class="center-btn">
-            <a href="wish.html"
-                style="color: var(--color-gold); text-decoration: none; border: 1px solid var(--color-gold); padding: 12px 30px; border-radius: 30px; text-transform: uppercase; letter-spacing: 2px;">Back
-                to Wishes</a>
+        <!-- Scratch Card Section -->
+        <div class="scratch-card-wrapper">
+            <div class="scratch-card-content">
+                Youre my forever person, Naraz na hona kabhi MERI ZINDAGI HAI TUU<<<<3 </div>
+                    <canvas id="scratch-canvas" class="scratch-card-canvas" width="320" height="160"></canvas>
+            </div>
+            <p class="scratch-instruction">Scratch the gold to reveal a secret... ✨</p>
+
+            <div class="center-btn">
+                <a href="wish.html"
+                    style="color: var(--color-gold); text-decoration: none; border: 1px solid var(--color-gold); padding: 12px 30px; border-radius: 30px; text-transform: uppercase; letter-spacing: 2px;">Back
+                    to Wishes</a>
+            </div>
         </div>
-    </div>
-    <script>
-        if ('scrollRestoration' in history) {
-            history.scrollRestoration = 'manual';
-        }
-        window.scrollTo(0, 0);
+        <script>
+            if ('scrollRestoration' in history) {
+                history.scrollRestoration = 'manual';
+            }
+            window.scrollTo(0, 0);
 
-        function toggleVoiceNote() {
-            const audio = document.getElementById('secret-audio');
-            const heart = document.getElementById('secret-heart');
+            function toggleVoiceNote() {
+                const audio = document.getElementById('secret-audio');
+                const heart = document.getElementById('secret-heart');
 
-            if (audio.paused) {
-                audio.play();
-                heart.classList.add('playing');
-            } else {
-                audio.pause();
-                heart.classList.remove('playing');
+                if (audio.paused) {
+                    audio.play();
+                    heart.classList.add('playing');
+                } else {
+                    audio.pause();
+                    heart.classList.remove('playing');
+                }
+
+                audio.onended = function () {
+                    heart.classList.remove('playing');
+                };
             }
 
-            audio.onended = function () {
-                heart.classList.remove('playing');
-            };
-        }
-    </script>
-    <script src="main.js"></script>
+            // Scratch Card Logic
+            const canvas = document.getElementById('scratch-canvas');
+            const ctx = canvas.getContext('2d', { willReadFrequently: true });
+            let isDrawing = false;
+
+            function init() {
+                const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+                grad.addColorStop(0, '#D4AF37');
+                grad.addColorStop(0.5, '#FFD700');
+                grad.addColorStop(1, '#D4AF37');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.fillStyle = "rgba(0,0,0,0.4)";
+                ctx.font = "bold 20px Outfit";
+                ctx.textAlign = "center";
+                ctx.fillText("SCRATCH ME", canvas.width / 2, canvas.height / 2 + 7);
+            }
+
+            function scratch(e) {
+                if (!isDrawing) return;
+                e.preventDefault();
+                const rect = canvas.getBoundingClientRect();
+                const x = (e.clientX || e.touches[0].clientX) - rect.left;
+                const y = (e.clientY || e.touches[0].clientY) - rect.top;
+
+                ctx.globalCompositeOperation = 'destination-out';
+                ctx.beginPath();
+                ctx.arc(x, y, 20, 0, Math.PI * 2);
+                ctx.fill();
+                checkPercent();
+            }
+
+            function checkPercent() {
+                const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+                let transparent = 0;
+                for (let i = 0; i < pixels.length; i += 4) {
+                    if (pixels[i + 3] === 0) transparent++;
+                }
+                if (transparent / (pixels.length / 4) > 0.5) {
+                    canvas.classList.add('hidden');
+                    if (window.confetti) {
+                        confetti({
+                            particleCount: 150,
+                            spread: 70,
+                            origin: { y: 0.7 },
+                            colors: ['#FFD700', '#FFFFFF', '#FF4D4D']
+                        });
+                    }
+                }
+            }
+
+            canvas.addEventListener('mousedown', () => isDrawing = true);
+            canvas.addEventListener('touchstart', () => isDrawing = true);
+            window.addEventListener('mouseup', () => isDrawing = false);
+            window.addEventListener('touchend', () => isDrawing = false);
+            canvas.addEventListener('mousemove', scratch);
+            canvas.addEventListener('touchmove', scratch);
+            init();
+        </script>
+        <script src="main.js"></script>
 
 </body>
 
