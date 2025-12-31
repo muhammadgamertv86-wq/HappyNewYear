@@ -255,6 +255,12 @@
             satelliteGroup.position.z = Math.sin(time) * orbitRadius;
             satelliteGroup.position.y = Math.sin(time * 0.5) * 1.5;
 
+            // Self rotation for dynamic look
+            if (satelliteModel) {
+                satelliteModel.rotation.y += 0.02;
+                satelliteModel.rotation.z += 0.01;
+            }
+
             // Update Label Position
             const vector = satelliteGroup.position.clone();
             vector.project(camera);
