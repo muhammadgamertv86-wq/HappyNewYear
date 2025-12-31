@@ -30,7 +30,48 @@
             overflow: hidden;
         }
 
+        /* Loading Screen */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 1s ease;
+        }
+
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 215, 0, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--color-gold);
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        #loading-text {
+            color: var(--color-gold);
+            font-family: var(--font-accent);
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
         #gallery-container {
+
             position: absolute;
             top: 0;
             left: 0;
@@ -223,7 +264,13 @@
 </head>
 
 <body>
+    <div id="loading-screen">
+        <div class="loader"></div>
+        <div id="loading-text">Preparing Memories...</div>
+    </div>
+
     <div id="intro-text">DOWN THE 2025 MEMORY LANE</div>
+
 
     <div id="gallery-container">
         <!-- Images will be injected here -->
@@ -260,12 +307,13 @@
         function createImgElement(num, side) {
             const img = document.createElement('img');
             // Assuming user puts images in /public/memories/
-            const path = `memories/${num}`;
+            const path = `/memories/${num}`;
 
             img.src = path + '.jpg';
             img.onerror = function () {
                 // Try .JPG (uppercase)
                 this.src = path + '.JPG';
+
                 this.onerror = function () {
                     // Try .png
                     this.src = path + '.png';
@@ -356,7 +404,58 @@
         }
 
         // Start Everything
-        window.onload = startSequence;
+        window.onload = () => {
+            let sequenceStarted = false;
+
+            const startSequenceOnce = () => {
+                if (sequenceStarted) return;
+                sequenceStarted = true;
+
+                document.getElementById('loading-screen').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('loading-screen').style.display = 'none';
+                    startSequence();
+                }, 1000);
+            };
+
+            // Force start after 5 seconds if images take too long (for large files on Vercel)
+            const safetyTimeout = setTimeout(() => {
+                console.log("Safety timeout reached, starting sequence...");
+                startSequenceOnce();
+            }, 5000);
+
+            // Pre-load first few images
+            let loadedCount = 0;
+            const toPreload = [1, 2, 3, 4];
+            const extensions = ['.jpg', '.JPG', '.png', '.jpeg'];
+
+            const checkDone = () => {
+                loadedCount++;
+                if (loadedCount >= toPreload.length) {
+                    clearTimeout(safetyTimeout);
+                    startSequenceOnce();
+                }
+            };
+
+            toPreload.forEach(num => {
+                const tryNextExtension = (extIdx) => {
+                    if (extIdx >= extensions.length) {
+                        checkDone();
+                        return;
+                    }
+
+                    const i = new Image();
+                    const path = `/memories/${num}`;
+                    i.src = path + extensions[extIdx];
+
+                    i.onload = checkDone;
+                    i.onerror = () => tryNextExtension(extIdx + 1);
+                };
+
+                tryNextExtension(0);
+            });
+        };
+
 
     </script>
 </body>
