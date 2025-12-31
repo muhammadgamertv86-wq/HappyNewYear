@@ -107,6 +107,25 @@
     <div class="container">
         <h1>Our Future</h1>
 
+        <!-- Music Player -->
+        <div class="music-player">
+            <div class="vinyl-container">
+                <div class="vinyl-record" id="vinyl"></div>
+            </div>
+            <div class="player-info">
+                <div class="player-title">Khushnaseebi</div>
+                <div class="player-artist">Abdul Hannan</div>
+                <div class="player-controls">
+                    <button class="play-pause-btn" id="playBtn">▶</button>
+                    <div class="progress-container" id="progressContainer">
+                        <div class="progress-bar" id="progressBar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <audio id="bgMusic" src="khushnaseebi.mp3"></audio>
+
         <div class="content-card">Honestly Ive planned my entire life with You
             And we have to execute it no matter what
             Were meant to be and ill make everything worth it for the love of my life
@@ -223,6 +242,42 @@
             canvas.addEventListener('mousemove', scratch);
             canvas.addEventListener('touchmove', scratch);
             init();
+
+            // Music Player Logic
+            const audio = document.getElementById('bgMusic');
+            const playBtn = document.getElementById('playBtn');
+            const vinyl = document.getElementById('vinyl');
+            const progressBar = document.getElementById('progressBar');
+            const progressContainer = document.getElementById('progressContainer');
+
+            playBtn.addEventListener('click', () => {
+                if (audio.paused) {
+                    audio.play();
+                    playBtn.innerText = '⏸';
+                    vinyl.classList.add('playing');
+                } else {
+                    audio.pause();
+                    playBtn.innerText = '▶';
+                    vinyl.classList.remove('playing');
+                }
+            });
+
+            audio.addEventListener('timeupdate', () => {
+                const percent = (audio.currentTime / audio.duration) * 100;
+                progressBar.style.width = percent + '%';
+            });
+
+            progressContainer.addEventListener('click', (e) => {
+                const rect = progressContainer.getBoundingClientRect();
+                const pos = (e.clientX - rect.left) / rect.width;
+                audio.currentTime = pos * audio.duration;
+            });
+
+            audio.addEventListener('ended', () => {
+                playBtn.innerText = '▶';
+                vinyl.classList.remove('playing');
+                progressBar.style.width = '0%';
+            });
         </script>
         <script src="main.js"></script>
 </body>
