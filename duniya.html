@@ -107,12 +107,30 @@
                 padding: 0 1rem;
             }
         }
+
+        /* Satellite Label */
+        #satellite-label {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.7);
+            color: #ffd700;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            pointer-events: none;
+            white-space: nowrap;
+            display: none;
+            z-index: 15;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            font-family: 'Playfair Display', serif;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+        }
     </style>
 </head>
 
 <body>
     <a href="wish.html" class="back-btn">← Back</a>
 
+    <div id="satellite-label">Always Yours, Moshi&lt;3</div>
     <div id="canvas-container"></div>
 
     <div class="text-overlay">
@@ -143,6 +161,13 @@
         controls.autoRotate = true;
         controls.autoRotateSpeed = 2.0;
 
+        // Satellite & Interaction State
+        let satellite, satelliteLabel;
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        let isLightOn = false;
+        let originalLightIntensity;
+
         // Earth
         const geometry = new THREE.SphereGeometry(2, 64, 64);
         const textureLoader = new THREE.TextureLoader();
@@ -158,8 +183,33 @@
         const earth = new THREE.Mesh(geometry, material);
         scene.add(earth);
 
-        // Atmosphere Glow (Simple Sprite)
-        // Can be omitted for simpler look, but adds 'premium' feel. Let's stick to simple clear earth first.
+        // Satellite Group
+        const satelliteGroup = new THREE.Group();
+
+        // Satellite Visual (Small Golden Heart/Sphere)
+        const satGeom = new THREE.SphereGeometry(0.1, 16, 16);
+        const satMat = new THREE.MeshPhongMaterial({
+            color: 0xffd700,
+            emissive: 0xffd700,
+            emissiveIntensity: 0.5
+        });
+        satellite = new THREE.Mesh(satGeom, satMat);
+        satelliteGroup.add(satellite);
+
+        // Glow effect for satellite
+        const spriteMaterial = new THREE.SpriteMaterial({
+            map: textureLoader.load('https://threejs.org/examples/textures/lensflare/lensflare0.png'),
+            color: 0xffd700,
+            transparent: true,
+            opacity: 0.7,
+            blending: THREE.AdditiveBlending
+        });
+        const sprite = new THREE.Sprite(spriteMaterial);
+        sprite.scale.set(0.4, 0.4, 1);
+        satelliteGroup.add(sprite);
+
+        scene.add(satelliteGroup);
+        satelliteLabel = document.getElementById('satellite-label');
 
         // Lighting
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
@@ -168,6 +218,7 @@
         const pointLight = new THREE.PointLight(0xffffff, 1.5);
         pointLight.position.set(5, 3, 5);
         scene.add(pointLight);
+        originalLightIntensity = pointLight.intensity;
 
         // Stars Background
         const starsGeometry = new THREE.BufferGeometry();
@@ -193,12 +244,69 @@
         camera.position.z = 5;
 
         // Animation Loop
+        let time = 0;
         function animate() {
             requestAnimationFrame(animate);
+            time += 0.01;
+
+            // Orbit Satellite
+            const orbitRadius = 3.5;
+            satelliteGroup.position.x = Math.cos(time) * orbitRadius;
+            satelliteGroup.position.z = Math.sin(time) * orbitRadius;
+            satelliteGroup.position.y = Math.sin(time * 0.5) * 1.5;
+
+            // Update Label Position
+            const vector = satelliteGroup.position.clone();
+            vector.project(camera);
+
+            const x = (vector.x * 0.5 + 0.5) * window.innerWidth;
+            const y = (vector.y * -0.5 + 0.5) * window.innerHeight;
+
+            satelliteLabel.style.display = 'block';
+            satelliteLabel.style.left = `${x}px`;
+            satelliteLabel.style.top = `${y - 40}px`;
+
             controls.update();
             renderer.render(scene, camera);
         }
         animate();
+
+        // Interaction Logic
+        function handleInteraction(event) {
+            const rect = renderer.domElement.getBoundingClientRect();
+            const clientX = event.clientX || (event.touches ? event.touches[0].clientX : 0);
+            const clientY = event.clientY || (event.touches ? event.touches[0].clientY : 0);
+
+            mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+            mouse.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObject(satellite, true);
+
+            if (intersects.length > 0) {
+                toggleLights();
+            }
+        }
+
+        function toggleLights() {
+            if (isLightOn) return;
+            isLightOn = true;
+
+            // Turn lights on!
+            pointLight.intensity = 5;
+            earth.material.emissive = new THREE.Color(0x111111);
+            satellite.scale.set(2, 2, 2);
+
+            setTimeout(() => {
+                pointLight.intensity = originalLightIntensity;
+                earth.material.emissive = new THREE.Color(0x000000);
+                satellite.scale.set(1, 1, 1);
+                isLightOn = false;
+            }, 2000);
+        }
+
+        window.addEventListener('mousedown', handleInteraction);
+        window.addEventListener('touchstart', handleInteraction);
 
         // Responsive
         window.addEventListener('resize', () => {
