@@ -221,7 +221,17 @@
                 transform: rotate(360deg);
             }
         }
+
+        /* YouTube Hidden Player */
+        #yt-player {
+            position: absolute;
+            width: 0;
+            height: 0;
+            pointer-events: none;
+            opacity: 0;
+        }
     </style>
+    <script src="https://www.youtube.com/iframe_api"></script>
 </head>
 
 <body>
@@ -248,6 +258,7 @@
         </div>
 
         <audio id="bgMusic" src="/khushnaseebi.mp3" preload="metadata"></audio>
+        <div id="yt-player"></div>
 
         <div class="content-card">Honestly Ive planned my entire life with You
             And we have to execute it no matter what
@@ -372,52 +383,128 @@
             const vinyl = document.getElementById('vinyl');
             const progressBar = document.getElementById('progressBar');
             const progressContainer = document.getElementById('progressContainer');
-
             const songTitle = document.getElementById('songTitle');
 
-            playBtn.addEventListener('click', () => {
-                if (audio.paused) {
-                    audio.play().catch(err => {
-                        console.error("Playback failed:", err);
-                        songTitle.innerText = "Error: File Missing";
-                        songTitle.style.color = "#ff4d4d";
-                    });
-                    playBtn.innerText = '⏸';
+            let ytPlayer;
+            let isUsingYT = false;
+            let ytReady = false;
+
+            // YouTube API Setup
+            window.onYouTubeIframeAPIReady = function () {
+                ytPlayer = new YT.Player('yt-player', {
+                    height: '0',
+                    width: '0',
+                    videoId: 'sO16_z-L4I8', // Official Khushnaseebi ID
+                    playerVars: {
+                        'playsinline': 1,
+                        'controls': 0,
+                        'disablekb': 1
+                    },
+                    events: {
+                        'onReady': () => { ytReady = true; },
+                        'onStateChange': onPlayerStateChange
+                    }
+                });
+            };
+
+            function onPlayerStateChange(event) {
+                if (event.data == YT.PlayerState.PLAYING) {
                     vinyl.classList.add('playing');
-                } else {
-                    audio.pause();
-                    playBtn.innerText = '▶';
+                    playBtn.innerText = '⏸';
+                    startYTProgress();
+                } else if (event.data == YT.PlayerState.PAUSED || event.data == YT.PlayerState.ENDED) {
                     vinyl.classList.remove('playing');
+                    playBtn.innerText = '▶';
+                }
+            }
+
+            function startYTProgress() {
+                const timer = setInterval(() => {
+                    if (isUsingYT && ytPlayer && ytPlayer.getCurrentTime) {
+                        const duration = ytPlayer.getDuration();
+                        const current = ytPlayer.getCurrentTime();
+                        if (duration > 0) {
+                            const percent = (current / duration) * 100;
+                            progressBar.style.width = percent + '%';
+                        }
+                    } else {
+                        clearInterval(timer);
+                    }
+                }, 500);
+            }
+
+            playBtn.addEventListener('click', () => {
+                if (!isUsingYT) {
+                    if (audio.paused) {
+                        audio.play().then(() => {
+                            playBtn.innerText = '⏸';
+                            vinyl.classList.add('playing');
+                        }).catch(err => {
+                            console.warn("Local file failed, switching to YouTube...");
+                            switchToYouTube();
+                        });
+                    } else {
+                        audio.pause();
+                        playBtn.innerText = '▶';
+                        vinyl.classList.remove('playing');
+                    }
+                } else {
+                    // YouTube controls
+                    if (ytPlayer.getPlayerState() === YT.PlayerState.PLAYING) {
+                        ytPlayer.pauseVideo();
+                    } else {
+                        ytPlayer.playVideo();
+                    }
                 }
             });
 
+            function switchToYouTube() {
+                isUsingYT = true;
+                songTitle.innerText = "Connecting to Cloud Audio...";
+                songTitle.style.color = "var(--color-gold)";
+
+                if (ytReady) {
+                    ytPlayer.playVideo();
+                    setTimeout(() => {
+                        songTitle.innerText = "Khushnaseebi (Cloud Mode)";
+                    }, 2000);
+                } else {
+                    songTitle.innerText = "Error: Music Service Unavailable";
+                    songTitle.style.color = "#ff4d4d";
+                }
+            }
+
             audio.addEventListener('error', () => {
-                console.error("Audio error: Could not load khushnaseebi.mp3");
-                songTitle.innerText = "File 'khushnaseebi.mp3' not found";
-                songTitle.style.color = "#ff4d4d";
-                playBtn.style.opacity = "0.5";
-                playBtn.disabled = true;
+                if (!isUsingYT) {
+                    console.warn("Audio error, trying YouTube...");
+                    switchToYouTube();
+                }
             });
 
             audio.addEventListener('timeupdate', () => {
-                if (audio.duration) {
+                if (!isUsingYT && audio.duration) {
                     const percent = (audio.currentTime / audio.duration) * 100;
                     progressBar.style.width = percent + '%';
                 }
             });
 
             progressContainer.addEventListener('click', (e) => {
-                if (audio.duration) {
-                    const rect = progressContainer.getBoundingClientRect();
-                    const pos = (e.clientX - rect.left) / rect.width;
+                const rect = progressContainer.getBoundingClientRect();
+                const pos = (e.clientX - rect.left) / rect.width;
+                if (!isUsingYT && audio.duration) {
                     audio.currentTime = pos * audio.duration;
+                } else if (isUsingYT && ytPlayer) {
+                    const duration = ytPlayer.getDuration();
+                    ytPlayer.seekTo(pos * duration, true);
                 }
             });
 
             audio.addEventListener('ended', () => {
-                playBtn.innerText = '▶';
-                vinyl.classList.remove('playing');
-                progressBar.style.width = '0%';
+                if (!isUsingYT) {
+                    playBtn.innerText = '▶';
+                    vinyl.classList.remove('playing');
+                    progressBar.style.width = '0%';
+                }
             });
         </script>
         <script src="main.js"></script>
