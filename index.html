@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wait a minute...</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&family=Playfair+Display:ital,wght@1,400;1,700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --font-main: 'Outfit', sans-serif;
+            --font-accent: 'Playfair Display', serif;
+            --color-gold: #ffd700;
+            --color-red: #ff4d4d;
+        }
+
+        body {
+            background-color: #0a0a0a;
+            color: #ffffff;
+            font-family: var(--font-main);
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle at 50% 50%, #1a1a1a 0%, #000000 100%);
+            overflow: hidden;
+        }
+
+        .entry-card {
+            text-align: center;
+            padding: 3rem;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+            max-width: 90%;
+            width: 500px;
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-family: var(--font-accent);
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--color-red);
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            font-weight: 300;
+            margin-bottom: 2rem;
+            color: #ccc;
+        }
+
+        .pass-container {
+            margin-top: 2rem;
+        }
+
+        .pass-input {
+            width: 100%;
+            padding: 1.2rem;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-family: var(--font-main);
+            font-size: 1.2rem;
+            outline: none;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .pass-input:focus {
+            border-color: var(--color-gold);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+        }
+
+        .hint-text {
+            color: rgba(255, 255, 255, 0.5);
+            font-style: italic;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .unlock-btn {
+            background: var(--color-gold);
+            color: #000;
+            border: none;
+            padding: 1rem 3rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 1.5rem;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .unlock-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
+        }
+
+        .error-msg {
+            color: var(--color-red);
+            margin-top: 1rem;
+            display: none;
+            font-weight: bold;
+        }
+
+        .verify-text {
+            color: var(--color-red);
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            h2 {
+                font-size: 1.3rem;
+            }
+
+            .entry-card {
+                padding: 2rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="entry-card">
+        <h1>Nigga thought i was making an Website</h1>
+        <h2>Mhm Mhm <br> Well No Shit Sherlock <br><br> <span class="verify-text">verify youre a real one</span></h2>
+
+        <div class="pass-container">
+            <input type="password" id="entry-pass" placeholder="Enter Password" class="pass-input">
+            <p id="error-msg" class="error-msg">Incorrect Password!</p>
+            <p class="hint-text">Hint: my closest people</p>
+            <button class="unlock-btn" onclick="checkPass()">ENTER</button>
+        </div>
+    </div>
+
+    <script>
+        function checkPass() {
+            const pass = document.getElementById('entry-pass').value;
+            const error = document.getElementById('error-msg');
+
+            if (pass === 'tu janne na 123') {
+                window.location.href = 'home.html';
+            } else {
+                error.style.display = 'block';
+                document.getElementById('entry-pass').value = '';
+                // Shake effect
+                const card = document.querySelector('.entry-card');
+                card.style.animation = 'none';
+                card.offsetHeight; /* trigger reflow */
+                card.style.animation = 'shake 0.5s';
+            }
+        }
+
+        // Add shake animation
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-10px); }
+                75% { transform: translateX(10px); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Enter key support
+        document.getElementById('entry-pass').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') checkPass();
+        });
+    </script>
+</body>
+
+</html>

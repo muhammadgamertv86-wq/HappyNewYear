@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>A Glimpse</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&family=Playfair+Display:ital,wght@1,400;1,600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --font-main: 'Outfit', sans-serif;
+            --font-accent: 'Playfair Display', serif;
+            --color-gold: #ffd700;
+        }
+
+        body {
+            background-color: #0a0a0a;
+            color: #ffffff;
+            font-family: var(--font-main);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            background: black;
+            overflow: hidden;
+        }
+
+        #gallery-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        /* Intro Text */
+        #intro-text {
+            position: absolute;
+            z-index: 30;
+            font-family: var(--font-accent);
+            font-size: 5rem;
+            text-align: center;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(255, 77, 77, 0.8), 0 0 50px rgba(255, 77, 77, 0.4);
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 1s ease-out;
+            pointer-events: none;
+        }
+
+        #intro-text.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        #intro-text.hidden {
+            opacity: 0;
+            transform: scale(1.5);
+            filter: blur(10px);
+        }
+
+        /* Image Styles */
+        .memory-img {
+            position: absolute;
+            width: 40vw;
+            /* take up about 40% of with each */
+            height: 60vh;
+            object-fit: cover;
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+            border: 4px solid #fff;
+            opacity: 0;
+            will-change: transform, opacity;
+            /* optimize for smoothness */
+        }
+
+        /* Positions */
+        .pos-left {
+            left: 5%;
+            transform: rotate(-5deg) scale(0.8);
+        }
+
+        .pos-right {
+            right: 5%;
+            transform: rotate(5deg) scale(0.8);
+        }
+
+        /* Animations */
+        /* Pop in from sides - Smoother cubic-bezier */
+        @keyframes popInLeft {
+            0% {
+                transform: translateX(-150%) rotate(-30deg) scale(0.5);
+                opacity: 0;
+            }
+
+            100% {
+                transform: translateX(0) rotate(-5deg) scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes popInRight {
+            0% {
+                transform: translateX(150%) rotate(30deg) scale(0.5);
+                opacity: 0;
+            }
+
+            100% {
+                transform: translateX(0) rotate(5deg) scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Increased duration to 1s for smoothness */
+        .animate-left {
+            animation: popInLeft 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
+        .animate-right {
+            animation: popInRight 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
+        /* Exit Animation */
+        .fade-out {
+            opacity: 0 !important;
+            transform: scale(0.9) !important;
+            transition: opacity 0.8s ease, transform 0.8s ease !important;
+        }
+
+        #final-message {
+            position: relative;
+            z-index: 20;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 1.5s ease;
+            max-width: 90%;
+            display: none;
+            /* Hidden initially */
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        #final-message.visible {
+            display: flex;
+            /* or block */
+            opacity: 1;
+        }
+
+        h1 {
+            font-family: var(--font-accent);
+            font-size: 3rem;
+            color: #ff4d4d;
+            margin: 0;
+            line-height: 1.2;
+            text-shadow: 0 0 20px rgba(255, 77, 77, 0.5);
+        }
+
+        h2 {
+            font-family: var(--font-accent);
+            font-size: 2.2rem;
+            color: var(--color-gold);
+            font-weight: 400;
+            margin: 0;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+
+        .continue-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 1rem 3rem;
+            font-size: 1.2rem;
+            font-family: var(--font-main);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 1rem;
+            text-decoration: none;
+        }
+
+        .continue-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            #intro-text {
+                font-size: 2.2rem !important;
+                padding: 0 1rem;
+            }
+
+            .memory-img {
+                width: 80vw !important;
+                height: 50vh !important;
+                left: 10vw !important;
+                right: auto !important;
+            }
+
+            .pos-left {
+                transform: rotate(-3deg) scale(0.9) !important;
+            }
+
+            .pos-right {
+                transform: rotate(3deg) scale(0.9) !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="intro-text">DOWN THE 2025 MEMORY LANE</div>
+
+    <div id="gallery-container">
+        <!-- Images will be injected here -->
+    </div>
+
+    <div id="final-message">
+        <div>
+            <h1>This is Just the beginning</h1>
+            <br>
+            <h2>Lets See What 2026 And Our Forever holds for us.</h2>
+        </div>
+
+        <a href="wish.html" class="continue-btn">
+            Continue to Your Wish →
+        </a>
+    </div>
+
+    <script>
+        // Config
+        const totalImages = 20;
+
+        const container = document.getElementById('gallery-container');
+        const finalMsg = document.getElementById('final-message');
+        const introText = document.getElementById('intro-text');
+
+        // Slower interval to allow for appreciation and smooth transitions
+        const intervalTime = 1200;
+        const totalDuration = 10000;
+
+        let currentPairIndex = 0;
+        let imageCounter = 1;
+        let flashbackInterval;
+
+        function createImgElement(num, side) {
+            const img = document.createElement('img');
+            // Assuming user puts images in /public/memories/
+            const path = `memories/${num}`;
+
+            img.src = path + '.jpg';
+            img.onerror = function () {
+                // Try .JPG (uppercase)
+                this.src = path + '.JPG';
+                this.onerror = function () {
+                    // Try .png
+                    this.src = path + '.png';
+                    this.onerror = function () {
+                        // Try .jpeg
+                        this.src = path + '.jpeg';
+                        this.onerror = function () {
+                            // Fallback to placeholder
+                            this.src = `https://placehold.co/400x600/1a1a1a/FFF?text=Memory+${num}`;
+                        }
+                    }
+                }
+            };
+
+            img.classList.add('memory-img');
+            if (side === 'left') {
+                img.classList.add('pos-left', 'animate-left');
+            } else {
+                img.classList.add('pos-right', 'animate-right');
+            }
+
+            // Random slight rotation for more natural feel
+            const randomRot = (Math.random() * 10 - 5);
+            img.style.setProperty('--rot', randomRot + 'deg');
+
+            return img;
+        }
+
+        function showNextPair() {
+            if (currentPairIndex >= 10) {
+                endFlashback();
+                return;
+            }
+
+            // Smoothly remove old images
+            const oldImages = Array.from(container.children);
+            oldImages.forEach(img => {
+                img.classList.remove('animate-left', 'animate-right'); // stop entrance anim
+                img.classList.add('fade-out');
+            });
+
+            // Remove from DOM after transition
+            setTimeout(() => {
+                oldImages.forEach(img => img.remove());
+            }, 800);
+
+            // Add new images
+            const imgLeft = createImgElement(imageCounter++, 'left');
+            const imgRight = createImgElement(imageCounter++, 'right');
+
+            container.appendChild(imgLeft);
+            container.appendChild(imgRight);
+
+            currentPairIndex++;
+        }
+
+        function endFlashback() {
+            clearInterval(flashbackInterval);
+
+            // Fade out last pair
+            const oldImages = Array.from(container.children);
+            oldImages.forEach(img => img.classList.add('fade-out'));
+
+            setTimeout(() => {
+                oldImages.forEach(img => img.remove());
+                // Show text
+                finalMsg.classList.add('visible');
+            }, 800);
+        }
+
+        function startSequence() {
+            // 1. Show Intro Text
+            setTimeout(() => {
+                introText.classList.add('visible');
+            }, 500);
+
+            // 2. Hide Intro Text & Start Flashback after 3 seconds
+            setTimeout(() => {
+                introText.classList.remove('visible');
+                introText.classList.add('hidden');
+
+                // Start Flashback slightly after text fades
+                setTimeout(() => {
+                    flashbackInterval = setInterval(showNextPair, intervalTime);
+                    showNextPair();
+                }, 800);
+            }, 3000);
+        }
+
+        // Start Everything
+        window.onload = startSequence;
+
+    </script>
+</body>
+
+</html>

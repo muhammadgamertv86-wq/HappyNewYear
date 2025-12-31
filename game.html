@@ -1,0 +1,571 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Momo vs Moshi - Tic Tac Toe</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&family=Playfair+Display:ital,wght@1,400;1,600&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --font-main: 'Outfit', sans-serif;
+            --font-accent: 'Playfair Display', serif;
+            --color-gold: #ffd700;
+            --color-red: #ff4d4d;
+            --glass-bg: rgba(20, 20, 20, 0.6);
+            --glass-border: rgba(255, 215, 0, 0.3);
+        }
+
+        body {
+            background-color: #0a0a0a;
+            color: #ffffff;
+            font-family: var(--font-main);
+            min-height: 100vh;
+            margin: 0;
+            background: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #000000 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Back Button */
+        .back-nav {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            text-decoration: none;
+            color: var(--color-gold);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 30px;
+            transition: all 0.3s;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 100;
+        }
+
+        .back-nav:hover {
+            background: rgba(255, 215, 0, 0.1);
+            transform: translateX(-5px);
+        }
+
+        /* Main Container */
+        .game-container {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.1), inset 0 0 20px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(20px);
+            padding: 3rem;
+            border-radius: 30px;
+            text-align: center;
+            max-width: 600px;
+            width: 90%;
+            position: relative;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        h1 {
+            font-family: var(--font-accent);
+            color: var(--color-gold);
+            font-size: 2.5rem;
+            margin: 0 0 2rem 0;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+        }
+
+        /* Stages */
+        .stage {
+            display: none;
+            animation: slideUp 0.4s ease-out;
+        }
+
+        .stage.active {
+            display: block;
+        }
+
+        /* Character Selection */
+        .char-selection {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .char-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+        }
+
+        .char-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-10px);
+            border-color: var(--color-gold);
+        }
+
+        .char-img-container {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin: 0 auto 1rem auto;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .char-img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .char-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: #fff;
+        }
+
+        .vs-badge {
+            font-family: var(--font-accent);
+            font-size: 2rem;
+            color: var(--color-red);
+            font-style: italic;
+        }
+
+        /* Difficulty */
+        .diff-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .btn-ui {
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.1));
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-family: var(--font-main);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-ui:hover {
+            background: var(--color-gold);
+            color: #000;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+        }
+
+        .btn-ui.red:hover {
+            background: var(--color-red);
+            color: #fff;
+            box-shadow: 0 0 20px rgba(255, 77, 77, 0.4);
+        }
+
+        /* Game Board */
+        .game-status {
+            font-size: 1.5rem;
+            color: var(--color-gold);
+            margin-bottom: 1.5rem;
+            min-height: 2rem;
+        }
+
+        .board-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            width: 300px;
+            margin: 0 auto 2rem auto;
+        }
+
+        .cell {
+            width: 90px;
+            height: 90px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-size: cover;
+            background-position: center;
+            transition: all 0.2s;
+        }
+
+        .cell:hover {
+            background-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .cell.winning {
+            border-color: var(--color-gold);
+            box-shadow: 0 0 20px var(--color-gold);
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 600px) {
+            .game-container {
+                padding: 1.5rem;
+                width: 95%;
+                margin-top: 60px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .char-selection {
+                gap: 1rem;
+            }
+
+            .char-img-container {
+                width: 80px;
+                height: 80px;
+            }
+
+            .char-name {
+                font-size: 0.9rem;
+            }
+
+            .vs-badge {
+                font-size: 1.2rem;
+            }
+
+            .board-grid {
+                width: 260px;
+                gap: 10px;
+            }
+
+            .cell {
+                width: 80px;
+                height: 80px;
+            }
+
+            .game-status {
+                font-size: 1.2rem;
+            }
+
+            .back-nav {
+                top: 10px;
+                left: 10px;
+                font-size: 0.9rem;
+                padding: 8px 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <a href="wish.html" class="back-nav">← Back to Wishes</a>
+
+    <div class="game-container">
+        <!-- STAGE 1: SELECT CHAR -->
+        <div id="stage-select" class="stage active">
+            <h1>Choose Your Character</h1>
+            <p style="opacity: 0.7; margin-bottom: 2rem;">The other will be the AI computer</p>
+
+            <div class="char-selection">
+                <div class="char-card" onclick="chooseChar('momo')">
+                    <div class="char-img-container">
+                        <img src="public/game/momo.jpg"
+                            onerror="this.src='https://ui-avatars.com/api/?name=Momo&background=random'" alt="Momo">
+                    </div>
+                    <div class="char-name">MOMO</div>
+                </div>
+
+                <div class="vs-badge">VS</div>
+
+                <div class="char-card" onclick="chooseChar('moshi')">
+                    <div class="char-img-container">
+                        <img src="public/game/moshi.jpg"
+                            onerror="this.src='https://ui-avatars.com/api/?name=Moshi&background=random'" alt="Moshi">
+                    </div>
+                    <div class="char-name">MOSHI</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STAGE 2: DIFFICULTY -->
+        <div id="stage-diff" class="stage">
+            <h1>Select Difficulty</h1>
+            <div class="diff-buttons">
+                <button class="btn-ui" onclick="startGame('easy')">Easy Mode</button>
+                <button class="btn-ui red" onclick="startGame('hard')">Impossible Mode</button>
+            </div>
+            <button onclick="setStage('select')"
+                style="background:none; border:none; color:rgba(255,255,255,0.5); margin-top:20px; cursor:pointer;">← Go
+                Back</button>
+        </div>
+
+        <!-- STAGE 3: GAME -->
+        <div id="stage-game" class="stage">
+            <h1 id="vs-title">Momo vs Moshi</h1>
+            <div class="game-status" id="status-text">Your Turn</div>
+
+            <div class="board-grid" id="board">
+                <!-- Cells -->
+            </div>
+
+            <button class="btn-ui" style="padding: 0.8rem 1.5rem; font-size:1rem;" onclick="resetGame()">Play
+                Again</button>
+        </div>
+    </div>
+
+    <!-- Celebration Audio -->
+    <audio id="win-sound" src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3"></audio>
+
+    <script>
+        // State
+        const assets = {
+            momo: 'public/game/momo.jpg',
+            moshi: 'public/game/moshi.jpg'
+        };
+        // Fallback checks could be done here, but HTML onerror handles it visually.
+
+        let gameState = {
+            player: null, // 'momo' or 'moshi'
+            ai: null,
+            difficulty: 'easy',
+            board: Array(9).fill(''),
+            active: false,
+            turn: 'player'
+        };
+
+        function setStage(id) {
+            document.querySelectorAll('.stage').forEach(el => el.classList.remove('active'));
+            document.getElementById(`stage-${id}`).classList.add('active');
+        }
+
+        function chooseChar(char) {
+            gameState.player = char;
+            gameState.ai = (char === 'momo') ? 'moshi' : 'momo';
+            document.getElementById('vs-title').innerText = `${char.toUpperCase()} VS ${gameState.ai.toUpperCase()}`;
+            setStage('diff');
+        }
+
+        function startGame(diff) {
+            gameState.difficulty = diff;
+            gameState.board.fill('');
+            gameState.active = true;
+            gameState.turn = 'player';
+            document.getElementById('status-text').innerText = "Your Turn!";
+
+            renderBoard();
+            setStage('game');
+        }
+
+        function resetGame() {
+            setStage('select');
+        }
+
+        function renderBoard() {
+            const board = document.getElementById('board');
+            board.innerHTML = '';
+
+            gameState.board.forEach((cell, i) => {
+                const div = document.createElement('div');
+                div.classList.add('cell');
+
+                if (cell === 'player') {
+                    div.style.backgroundImage = `url(${assets[gameState.player]})`;
+                    div.style.boxShadow = `0 0 15px var(--color-gold)`;
+                } else if (cell === 'ai') {
+                    div.style.backgroundImage = `url(${assets[gameState.ai]})`;
+                    div.style.boxShadow = `0 0 15px var(--color-red)`;
+                }
+
+                div.addEventListener('click', () => handleMove(i));
+                board.appendChild(div);
+            });
+        }
+
+        function handleMove(i) {
+            if (!gameState.active || gameState.board[i] !== '' || gameState.turn !== 'player') return;
+
+            gameState.board[i] = 'player';
+            renderBoard();
+
+            if (checkWin('player')) {
+                endGame('YOU WIN!');
+                triggerWin();
+                return;
+            }
+            if (!gameState.board.includes('')) {
+                endGame('DRAW!');
+                return;
+            }
+
+            gameState.turn = 'ai';
+            document.getElementById('status-text').innerText = "Thinking...";
+            setTimeout(aiMove, 600);
+        }
+
+        function aiMove() {
+            if (!gameState.active) return;
+
+            let move;
+            if (gameState.difficulty === 'easy') {
+                move = getRandomMove();
+            } else {
+                move = getBestMove();
+            }
+
+            gameState.board[move] = 'ai';
+            renderBoard();
+
+            if (checkWin('ai')) {
+                endGame('AI WINS!');
+                return;
+            }
+            if (!gameState.board.includes('')) {
+                endGame('DRAW!');
+                return;
+            }
+
+            gameState.turn = 'player';
+            document.getElementById('status-text').innerText = "Your Turn!";
+        }
+
+        function getRandomMove() {
+            const avail = gameState.board.map((v, i) => v === '' ? i : null).filter(v => v !== null);
+            return avail[Math.floor(Math.random() * avail.length)];
+        }
+
+        function getBestMove() {
+            let bestScore = -Infinity;
+            let move;
+            for (let i = 0; i < 9; i++) {
+                if (gameState.board[i] === '') {
+                    gameState.board[i] = 'ai';
+                    let score = minimax(gameState.board, 0, false);
+                    gameState.board[i] = '';
+                    if (score > bestScore) {
+                        bestScore = score;
+                        move = i;
+                    }
+                }
+            }
+            return move;
+        }
+
+        const scores = { ai: 10, player: -10, tie: 0 };
+
+        function minimax(board, depth, isMaximizing) {
+            let result = null;
+            if (checkWin('ai', board)) result = 'ai';
+            else if (checkWin('player', board)) result = 'player';
+            else if (!board.includes('')) result = 'tie';
+
+            if (result !== null) return scores[result];
+
+            if (isMaximizing) {
+                let bestScore = -Infinity;
+                for (let i = 0; i < 9; i++) {
+                    if (board[i] === '') {
+                        board[i] = 'ai';
+                        let score = minimax(board, depth + 1, false);
+                        board[i] = '';
+                        bestScore = Math.max(score, bestScore);
+                    }
+                }
+                return bestScore;
+            } else {
+                let bestScore = Infinity;
+                for (let i = 0; i < 9; i++) {
+                    if (board[i] === '') {
+                        board[i] = 'player';
+                        let score = minimax(board, depth + 1, true);
+                        board[i] = '';
+                        bestScore = Math.min(score, bestScore);
+                    }
+                }
+                return bestScore;
+            }
+        }
+
+        function checkWin(who, board = gameState.board) {
+            const wins = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                [0, 4, 8], [2, 4, 6]
+            ];
+            return wins.some(c => c.every(i => board[i] === who));
+        }
+
+        function endGame(msg) {
+            gameState.active = false;
+            document.getElementById('status-text').innerText = msg;
+        }
+
+        function triggerWin() {
+            document.getElementById('win-sound').play();
+            const duration = 3000;
+            const end = Date.now() + duration;
+
+            (function frame() {
+                confetti({
+                    particleCount: 5,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 }
+                });
+                confetti({
+                    particleCount: 5,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 }
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        }
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Our Story</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Playfair+Display:ital,wght@1,400;1,600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            display: block;
+            /* Override flex center */
+            height: auto;
+            min-height: 100vh;
+            padding: 4rem 1rem;
+            color: #fff;
+            background: #0a0a0a;
+            position: relative;
+            overflow-y: auto !important;
+            /* Enable scrolling */
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 {
+            color: var(--color-gold);
+            font-family: var(--font-accent);
+            font-size: 3.5rem;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            opacity: 0.8;
+            margin-bottom: 3rem;
+            font-style: italic;
+            white-space: pre-line;
+        }
+
+        .story-section {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 215, 0, 0.1);
+            padding: 2.5rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+            line-height: 1.8;
+            font-size: 1.1rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            white-space: pre-wrap;
+            /* Keeps user formatting */
+            text-transform: uppercase;
+            /* Capitalize all letters */
+        }
+
+        .center-btn {
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 600px) {
+            .container {
+                padding: 0 10px;
+            }
+
+            h1 {
+                font-size: 2.2rem;
+                margin-bottom: 2rem;
+            }
+
+            .story-section {
+                padding: 1.5rem;
+                font-size: 0.95rem;
+            }
+
+            .center-btn {
+                margin-bottom: 2rem;
+            }
+        }
+
+        /* Secret Heart Styles */
+        .secret-heart {
+            display: inline-block;
+            cursor: pointer;
+            color: var(--color-gold);
+            font-size: 1.5rem;
+            margin-left: 10px;
+            transition: all 0.3s ease;
+            vertical-align: middle;
+            opacity: 0.6;
+            /* Subtle by default */
+        }
+
+        .secret-heart:hover {
+            opacity: 1;
+            transform: scale(1.2);
+            text-shadow: 0 0 10px var(--color-gold);
+        }
+
+        .secret-heart.playing {
+            animation: pulse 1s infinite;
+            color: var(--color-red);
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.3);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="balloon-bg" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;"></div>
+
+    <div class="container">
+        <h3 style="text-align: center; letter-spacing: 3px; font-weight: 300;">TU JAANE NA</h3>
+        <h1>Our Story</h1>
+        <div class="subtitle">This is How Momo And Moshi Fell in Love!❤️
+            The Starting of A forever</div>
+
+        <div class="story-section">Start of the story, It was in the warmth of April in Bahria town Rubrics,Our urdu
+            classes had started i joined rubrics in the end of the year Last month! There was this girl who was so
+            seedhi saadhi si so simple so gorgeous tall so my type(definately didnt look 19)
+            But she was gorgeous and yk just that feeling when you saw someone and they look like the love of ur life
+            I used to stalk her she was going in her car and she was wearing a blue dress
+            But here i was just an guy awkward and shy finding a way to approach her when omer came up with an idea it
+            was urdu paper and even tho i already had books
+            Omer came up with the plan to ask Roshi for the book and thats how it all started and the i tried to swiftly
+            move the conversation on until i won girl this girl over and oh it wasnt easy at all But Alhamdullilah worth
+            it cuz she is the one.
+            Alhamdullilah for everything!</div>
+
+        <div class="story-section">5 May 2024
+            Was When I first Messaged Moshi
+            The Message was
+            “Hi sorry for disturbing u atm by chance do u have an extra urdu ki book I’ve searched everywhere asked
+            everyone kahin se ni mili so youre the last hope”
+
+            Then u replied and we talked a bit and then
+            On
+
+            6 May 2024
+            Your driver came and gave me the book before paper
+            And later i came and returned it to u
+            U were inside the car
+            That was our first interaction according to me
+            According to u i ddint give u
+            Ur bag but i dont remember that 😭
+
+            Khair phir we talked talked talkedd</div>
+
+        <div class="story-section">Then i went to dubai and mimi wanted some stuff i got it for her
+            Then after your academy we met one day at burning brownie 27 July 2024
+            U saw ke i sweat alot lol
+            we had our first proper interaction i was really shy i took the pony tery se and was giving u things but u
+            barely took anything
+
+            Phir after that
+            Eventually kasana and Raima started dating</div>
+
+        <div class="story-section">23 oct 2024
+            Phir we all had our first meetup
+            proper wala we sat we played uno and was a fun day overall And han
+
+            28th Oct 2024 we went to buttlers
+            Omer tha and me and u and Riama wS with her friend and it was akward takay i was tlaking and we had peach
+            iced tea
+            And i remember i checked if my card works tap wala for the first time unreal happiness</div>
+
+        <div class="story-section">On 31dec 2024 new years night
+            You first time met mama sath with her talked to her snd it all felt like a dream come true
+            You really are the love of my life
+            You were with ur cousins we couldnt do much but wws a fun day overall
+
+            Phir we next met on neblilloum idek spellings
+            On
+            Feb 2 2025
+            This was the first time it was mainly just me and u
+            You were by my side bayaan concert and it was sm fun
+            still we missed to sing maand sath
+            But us time i was kinda shy abhi bhi but still was a great day</div>
+
+        <div class="story-section">Idk the date for this but we went to Tmuc
+            Me omer And Roshi for admission and stuff
+            Then we went to roots too jahan Kasana And Raima joined?
+
+            Phir on 30th march 2025
+            We met at chand raat
+            We had fun u met mama again
+            And i got the chance to buy u churiyan yeyeyeye and it was such a fun day i still remember the happiness
+            Is time tak i was starrting to be a lil comfy
+
+
+            I forgot one date too ur dadi wala day when we went tmuc idk but such aterrible day</div>
+
+        <div class="story-section">After this
+            On 18 august we went to tmuc and filled our forms Me moshi and Mimi
+            Phir i took brownies too and it was fun yeyeyeye
+            The first time i had tried Roshi ke hand ka kuch and the brownies were yummy in my tummy
+
+
+            Phir mimi ki academy started and i used to come to meet u here n there
+            On 25th august me n u went to Alfatah aline and we had fun and bahir dhoop mein nikal ke i rememberd ke lets
+            take a picture andi sang hoor next to ur car jee na(naufal log agaye thay peechay se)😭</div>
+
+        <div class="story-section">Phir on Sep 17
+            I met u again
+            It was our orientation day for our uni yeyeyeyey
+            We went to kfc and i gaveu the ring and the bracelet
+            But the ring wasnt ur size so i had to go and get it changed hehehee
+
+            On Sep 20
+            We went to hasan raheems concert
+            It was overall a fun day and we had fun
+            I also got the chance to pehna u the ring wven tho chotu sa tha chup ke we did
+            And was the first time we took pictures sahih se
+
+
+            On Sep 26 we went to Bhurban
+            It was the first time i really opened out infront of u guys and it was a really fun day
+            We went to chinar gold club together and i almost stayed the whole day with u
+            It was a really fun and memorable time
+            And we took cute pictures yeyeye
+
+
+            On 27th sep we were on the same concert but it was unfortunate to not meet u
+
+
+            On 29 Sep it was the first day of our university class
+            And ever since my life is filled with endless happiness
+            I get to see my fav person almost everyday and be with u and trust me no better feeling than this
+            This is the most alive ive ever felt i love you more than anything thankyou for making my life so joyful
+        </div>
+
+        <div class="story-section">On 7th Oct
+            We met at a ryze concert
+            And We had fun together and we took alot of pictures together
+            And u had the fear to get caught takay alizey ki dostien ayin win thin and we were matching and yeah
+
+            On Oct 15
+            We went on a shopping date after uni it was really fun and then we had fries from Ranchers and golgappy and
+            chaat too and Roshi got new pants and i was sittng in a ladies fitting room but was a fun day over all
+            yeeyee
+
+            On Oct 23
+            We had our welcome party
+            And it was a boring event overall but wr had fun
+            And it was sm wala fit and we took fit pictures and there was this annoying ass kid
+            And jee na boring event tha bas
+
+            On oct 24
+            We did our first shadi crash
+            The shadi crazh it self wasnt that much fun
+            But we still managed to have fun
+            And we took cute Polaroids pictures
+            And then we went to fuoco and we all had fum
+            At the end kahn crashed his car and yeah
+
+            On Nov 11 we went on our first qawali night together but unfortunately we didnt get the chance to attend it
+            cuz they didnt let kasana inside
+            Later we went to view point and u drove my gandi gaari
+            And then wapsi pe we had fun u sat next to me we vibed took cute photos
+            Was a very good day until it was ruined</div>
+
+        <div class="story-section">On 14 nov
+            U threw a surpirse birthday party
+            And i got the sit with u alone and we did baatien
+            And then u surprised me and it made my day
+            It was the best birthday ive ever had and ywyeyeyeyeye
+            Thankyou for everything you do
+            On 20th Novemever
+            U gave ne a birthday party u gave me brownies
+            And lots of gifts
+
+            On December 13th we went to shaam Shandar Tmuc Event
+            Honestly a boom (we took our bestestest pictures)
+            Such a fun day such a vibe and we enjoyed alot
+            And as this year is coming to an end Lets see what our 2026 holds for us.</div>
+
+        <div class="story-section" style="border-color: var(--color-gold); background: rgba(255,215,0,0.1);">You make my
+            life sm speical youre my fav peeosn thankyou for everything meri Moshi lifes so exciting with u i
+            appericiate every momemt we spend and every second with u feels like a dream come true
+            Thankyou for everything
+            Jeenay ki waja tum ho
+            Muskanay ki waja tum ho I lovee u ❤️
+
+            Every day with her is so worth it
+            Yes we had alot of ups and downs
+            But at the endof the day youre the person my heart wnats to run to Youre my forever
+            I cant go a moment without you
+            Youre the bestsstsst part of my life. And Alhamdullilah the bond with u is smth real!
+            This story will be updated each year Till Forevrr Inshallah Ameen.
+            <h1
+                style="text-align: center; margin-top: 2rem; font-size: 2.5rem; color: var(--color-gold); text-shadow: 0 0 10px rgba(255,215,0,0.5);">
+                Momo and Moshi FL ♾️ <span class="secret-heart" id="secret-heart" onclick="toggleVoiceNote()">❤️</span>
+            </h1>
+        </div>
+
+        <audio id="secret-audio" src="voice-note.mp3"></audio>
+
+        <div class="center-btn">
+            <a href="wish.html"
+                style="color: var(--color-gold); text-decoration: none; border: 1px solid var(--color-gold); padding: 12px 30px; border-radius: 30px; text-transform: uppercase; letter-spacing: 2px;">Back
+                to Wishes</a>
+        </div>
+    </div>
+    <script>
+        function toggleVoiceNote() {
+            const audio = document.getElementById('secret-audio');
+            const heart = document.getElementById('secret-heart');
+
+            if (audio.paused) {
+                audio.play();
+                heart.classList.add('playing');
+            } else {
+                audio.pause();
+                heart.classList.remove('playing');
+            }
+
+            audio.onended = function () {
+                heart.classList.remove('playing');
+            };
+        }
+    </script>
+    <script src="main.js"></script>
+
+</body>
+
+</html>
