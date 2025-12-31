@@ -183,32 +183,62 @@
         const earth = new THREE.Mesh(geometry, material);
         scene.add(earth);
 
-        // Satellite Group
+        // Satellite Group (The whole moving unit)
         const satelliteGroup = new THREE.Group();
 
-        // Satellite Visual (Small Golden Heart/Sphere)
-        const satGeom = new THREE.SphereGeometry(0.1, 16, 16);
-        const satMat = new THREE.MeshPhongMaterial({
-            color: 0xffd700,
-            emissive: 0xffd700,
-            emissiveIntensity: 0.5
-        });
-        satellite = new THREE.Mesh(satGeom, satMat);
-        satelliteGroup.add(satellite);
+        // Satellite Container (For internal rotation)
+        const satelliteModel = new THREE.Group();
+        satelliteGroup.add(satelliteModel);
 
-        // Glow effect for satellite
+        // 1. Central Body (Metallic Gold Box)
+        const bodyGeom = new THREE.BoxGeometry(0.15, 0.15, 0.15);
+        const bodyMat = new THREE.MeshPhongMaterial({
+            color: 0xffd700,
+            metalness: 0.9,
+            roughness: 0.1,
+            emissive: 0xffd700,
+            emissiveIntensity: 0.2
+        });
+        const body = new THREE.Mesh(bodyGeom, bodyMat);
+        satelliteModel.add(body);
+
+        // 2. Solar Panels (Deep Blue Metallic)
+        const panelGeom = new THREE.BoxGeometry(0.4, 0.1, 0.01);
+        const panelMat = new THREE.MeshPhongMaterial({
+            color: 0x003366,
+            metalness: 0.8,
+            roughness: 0.2
+        });
+
+        const leftPanel = new THREE.Mesh(panelGeom, panelMat);
+        leftPanel.position.x = 0.3;
+        satelliteModel.add(leftPanel);
+
+        const rightPanel = new THREE.Mesh(panelGeom, panelMat);
+        rightPanel.position.x = -0.3;
+        satelliteModel.add(rightPanel);
+
+        // 3. Antenna (Thin Cylinder)
+        const antGeom = new THREE.CylinderGeometry(0.01, 0.01, 0.1, 8);
+        const antMat = new THREE.MeshPhongMaterial({ color: 0xcccccc });
+        const antenna = new THREE.Mesh(antGeom, antMat);
+        antenna.position.y = 0.1;
+        satelliteModel.add(antenna);
+
+        // Glow effect (Visual Flare)
         const spriteMaterial = new THREE.SpriteMaterial({
             map: textureLoader.load('https://threejs.org/examples/textures/lensflare/lensflare0.png'),
             color: 0xffd700,
             transparent: true,
-            opacity: 0.7,
+            opacity: 0.5,
             blending: THREE.AdditiveBlending
         });
         const sprite = new THREE.Sprite(spriteMaterial);
-        sprite.scale.set(0.4, 0.4, 1);
-        satelliteGroup.add(sprite);
+        sprite.scale.set(0.6, 0.6, 1);
+        satelliteModel.add(sprite);
 
         scene.add(satelliteGroup);
+        satellite = body; // For raycasting interaction
         satelliteLabel = document.getElementById('satellite-label');
 
         // Lighting
